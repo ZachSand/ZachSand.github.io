@@ -1,2 +1,2 @@
 # ZachSand.github.io
-ZachSand personal GitHub page
+My personal website and blog page using Jekyll with GitHub. 
