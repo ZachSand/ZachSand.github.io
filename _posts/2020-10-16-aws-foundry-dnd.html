@@ -1,0 +1,67 @@
+---
+layout: post
+title: "AWS and D&D"
+subtitle: "Foundry VTT"
+date: 2020-10-11
+background: '/img/posts/02.jpg'
+---
+
+<h2>Background</h2>
+<p>
+    Prior to a few months ago I hadn't hadn't had a whole lot of experience with Amazon Web Services or
+    <a href="https://en.wikipedia.org/wiki/Dungeons_%26_Dragons">Dungeons and Dragons</a>.
+    This may seem like a strange combination of topics to some but I'll explain shortly. When the COVID-19 pandemic hit, I was
+    missing socializing with my friends and just being social in general. My friends and I started playing Call of Duty: Warzone,
+    however that got stale rather quickly.
+    I had always wanted to play D&D but never got around to forming a party that wanted to play. If you've played D&D before
+    you probably know finding interest isn't that difficult but getting 4-6+ people to all free up their schedules to
+    sit down at a table at the same time is the equivalent of trying to herd cats. Well one of the few fortunate things that happened due to COVID was
+    with everyone being quarantined at home it opened up an ample opportunity to connect virtually for a D&D campaign.
+</p>
+
+<p>
+    We decided on trying out <a href="https://roll20.net/">Roll20</a> for our Virtual Tabletop as it seemed like the most
+    commonly used <i>freemium</i> service. We already had a <a href="https://discord.com/">Discord</a> server we were all
+    members of so we just used that for communication. We also ended up using <a href="https://www.dndbeyond.com/">D&D Beyond</a>
+    to manage our character sheets, items, gold, etc. to simplify and standardize the process of character creation as well as
+    maintenance. To simplify the connection to Roll20 and D&D Beyond we all used the <a href="https://beyond20.here-for-more.info/">Beyond20</a>
+    browser plugin so we could roll skill checks, attacks, spells, etc. from our character sheets in D&D and have them reflect in Roll20.
+
+</p>
+
+<p>
+    Our first session went well but we all had different issues with Roll20. Either the browser wasn't updating,
+    our character sheet dice rolls weren't carrying over properly, or the graphics generally looked bad. Our DM (dungeon master)
+    also said that he felt restricted with the different options Roll20 offered. He bared the brunt of creating maps, lighting and
+    other virtual elements in the Roll20 VTT. So we decided to look elsewhere for VTT options, which is when we came across this up
+    and coming player called <a href="https://foundryvtt.com/">Foundry VTT</a>. It seemed to offer everything we wanted,
+    it was open source, configurable, extendable... generally it just covered all of the points we were interested in. It runs
+    as a node server built mainly with JavaScript and was written generally as a VTT to allow different game systems (not just D&D).
+    It was also setup to easily allow developers to create their own modules that interacted directly with the application and game systems.
+    This was what interested me the most! If we ever had any issues or there was some ad-hoc feature we wanted I could just code it
+    up as an additional module and share it with my campaign (and potentially the entire Foundry VTT community).
+</p>
+
+<h2>Foundry VTT and AWS</h2>
+<p>
+    Our GM decided to pay the one time license cost of $50 and was able to setup Foundry VTT locally on his Windows machine.
+    Unfortunately he wasn't able to get his port forwarding to work properly to expose his machine's local port externally
+    so that we could connect to it. So rather than his work and money be wasted I decided I was going to setup Foundry VTT
+    in an AWS EC2 Linux instance.
+</p>
+
+<p>
+    I ended up registering a domain name with <a href="https://www.godaddy.com/">GoDaddy</a> in an attempt to be fancy
+    with a custom domain name. If you've ever used the AWS EC2 public IP URLs, you know they're rather unattractive. I also
+    went with GoDaddy for the domain name registration because it was cheaper than AWS <a href="https://aws.amazon.com/route53/">Route 53</a>
+    for the same domain. This decision ended up causing a bit of a headache for myself to switch over the nameservers with the necessary
+    record sets in the Route 53 hosted zone.
+</p>
+
+<p>
+    I spun up a simple AWS EC2 t2.micro (free tier) Amazon Linux instance. I added my personal IP to the inbound rules for
+    port 22 (SSH port) and transferred over the Foundry VTT Linux installation and license. Prior to this I had a good amount of experience
+    setting up, configuring and managing Linux servers. Along with being a software developer, I was/am also the only DevOps person
+    on my team at work so a lot of the server configuration, CI/CD, containerization with Docker, port configuration, firewall, etc.
+    falls onto my plate to configure.
+</p>
