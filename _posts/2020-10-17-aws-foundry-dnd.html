@@ -2,21 +2,20 @@
 layout: post
 title: "AWS and D&D"
 subtitle: "Foundry VTT"
-date: 2020-10-11
+date: 2020-10-17
 background: '/img/posts/02.jpg'
 ---
 
 <h2>Background</h2>
 <p>
-    Prior to a few months ago I hadn't hadn't had a whole lot of experience with Amazon Web Services or
+    Prior to a few months ago I hadn't hadn't had much experience with Amazon Web Services or
     <a href="https://en.wikipedia.org/wiki/Dungeons_%26_Dragons">Dungeons and Dragons</a>.
     This may seem like a strange combination of topics to some but I'll explain shortly. When the COVID-19 pandemic hit, I was
-    missing socializing with my friends and just being social in general. My friends and I started playing Call of Duty: Warzone,
-    however that got stale rather quickly.
-    I had always wanted to play D&D but never got around to forming a party that wanted to play. If you've played D&D before
+    missing socializing with my friends and being social in general.
+    I had always wanted to play D&D but never got around to forming or joining a party that wanted to play. If you've played D&D before
     you probably know finding interest isn't that difficult but getting 4-6+ people to all free up their schedules to
-    sit down at a table at the same time is the equivalent of trying to herd cats. Well one of the few fortunate things that happened due to COVID was
-    with everyone being quarantined at home it opened up an ample opportunity to connect virtually for a D&D campaign.
+    sit down at a table at the same time is the equivalent of trying to herd cats. Well, one of the few fortunate things that resulted from COVID was
+    that with everyone being quarantined at home it opened up an ample opportunity to connect virtually for a D&D campaign.
 </p>
 
 <p>
@@ -24,13 +23,12 @@ background: '/img/posts/02.jpg'
     commonly used <i>freemium</i> service. We already had a <a href="https://discord.com/">Discord</a> server we were all
     members of so we just used that for communication. We also ended up using <a href="https://www.dndbeyond.com/">D&D Beyond</a>
     to manage our character sheets, items, gold, etc. to simplify and standardize the process of character creation as well as
-    maintenance. To simplify the connection to Roll20 and D&D Beyond we all used the <a href="https://beyond20.here-for-more.info/">Beyond20</a>
-    browser plugin so we could roll skill checks, attacks, spells, etc. from our character sheets in D&D and have them reflect in Roll20.
-
+    maintenance. To create the connection to Roll20 and D&D Beyond we all used the <a href="https://beyond20.here-for-more.info/">Beyond20</a>
+    browser plugin so we could roll skill checks, attacks, spells and everything else from our character sheets in D&D and have them reflect in Roll20.
 </p>
 
 <p>
-    Our first session went well but we all had different issues with Roll20. Either the browser wasn't updating,
+    Our first session went well but we all had different issues with Roll20. Either the browser was out of sync,
     our character sheet dice rolls weren't carrying over properly, or the graphics generally looked bad. Our DM (dungeon master)
     also said that he felt restricted with the different options Roll20 offered. He bared the brunt of creating maps, lighting and
     other virtual elements in the Roll20 VTT. So we decided to look elsewhere for VTT options, which is when we came across this up
@@ -38,7 +36,7 @@ background: '/img/posts/02.jpg'
     it was open source, configurable, extendable... generally it just covered all of the points we were interested in. It runs
     as a node server built mainly with JavaScript and was written generally as a VTT to allow different game systems (not just D&D).
     It was also setup to easily allow developers to create their own modules that interacted directly with the application and game systems.
-    This was what interested me the most! If we ever had any issues or there was some ad-hoc feature we wanted I could just code it
+    This was what interested me the most. If we ever had any issues or there was some ad-hoc feature we wanted I could just code it
     up as an additional module and share it with my campaign (and potentially the entire Foundry VTT community).
 </p>
 
@@ -63,5 +61,22 @@ background: '/img/posts/02.jpg'
     port 22 (SSH port) and transferred over the Foundry VTT Linux installation and license. Prior to this I had a good amount of experience
     setting up, configuring and managing Linux servers. Along with being a software developer, I was/am also the only DevOps person
     on my team at work so a lot of the server configuration, CI/CD, containerization with Docker, port configuration, firewall, etc.
-    falls onto my plate to configure.
+    falls onto my plate to configure (not that I had any official training on it).
+    On the Linux instance I used <a href="https://en.wikipedia.org/wiki/Yum_(software)">yum</a> to install
+    nodejs and nginx. I used <a href="https://www.nginx.com/">nginx</a> as the proxy server because that is what
+    I usually use. I used nginx to route the browser HTTP requests (port 80) to the domain
+    to the internal port where FoundryVTT was running (port 30000). Foundry also has <a href="https://foundryvtt.com/kb/">documentation</a>
+    on how to set all of this up for anyone that would need it.
+</p>
+
+<p>
+    We've been using Foundry VTT ever since and it has been going really well. We're still using all the same tooling as before
+    we just switched from Roll20 to Foundry. I also ended up adding our DM as an extra user via AWS IAM so that he could
+    stop and start the server as needed in preparation for our sessions. I haven't had the time to create any custom modules
+    for our group yet but thankfully the game system and community's modules are more than enough to play D&D virtually.
+    I have run FoundryVTT locally and tinkered around a bit with the <a href="https://foundryvtt.com/api/">Foundry API</a>, such as parsing
+    incoming chat message, determining if certain spells were mentioned and creating buttons to apply conditions/effects to active tokens
+    based on those spells. It seems like this was a bit premature since Foundry announced a new <a href="https://foundryvtt.com/packages/dae/">Dynamic
+    Active Effects</a> functionality. Which isn't the same thing I was doing but will change how I need to implement the changes.
+    Hopefully I have some extra time soon as I'd like to contribute back to the community with a useful module.
 </p>
