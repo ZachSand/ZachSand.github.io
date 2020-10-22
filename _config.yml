@@ -9,7 +9,7 @@ github_username:    ZachSand
 linkedin_username:  zachsanders
 
 # Seems to be required for Github.io to work. Clean blog theme.
-theme: jekyll-theme-clean-blog
+remote_theme: StartBootstrap/jekyll-theme-clean-blog
 
 # Google Analytics
 google_analytics:   UA-180194380-1
