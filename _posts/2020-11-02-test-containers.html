@@ -1,0 +1,89 @@
+---
+layout: post
+title: "Testing with Containers"
+subtitle: "Test Containers"
+date: 2020-10-17
+background: '/img/posts/02.jpg'
+---
+
+<img src="/img/posts/testing-comic.jpg">
+
+<h2>Integration Testing</h2>
+<p>
+    This post is about integration testing, as opposed to unit testing. Unit testing is obviously extremely important,
+    however integration testing is also very important to have confidence in your system as whole. For brevity, integration testing is
+    testing the system/component/application as a cohesive group. This differs from unit testing because you are testing
+    everything together rather than individual "units" of logic. For example, you may have a method that performs an
+    encryption algorithm on some set of data. You would typically write a unit test that tests only this functionality;
+    given input data, you expect encrypted output data. For the integration test for this hypothetical application you
+    may write a test that sends a POST request to an REST API endpoint to create a user. This POST request will trigger
+    the encryption method on the user password before storing it in the database. The integration test may verify that
+    the user was created correctly in the database which would test that the full user creation process is working
+    correctly. However to truly test this you would need a database to use for the test and ideally this database is
+    very similar to the live application's database. You could use an in memory database such as <a href="https://www.h2database.com/html/main.html">H2</a>
+    for Java, a database running on some development server or you could mock the interaction of the database because you assume the database
+    will function how it is supposed to because it isn't software that you've written. Another option that I like (for
+    the most part) is using a <a href=https://www.docker.com/">Docker</a> container for the database. When done correctly,
+    utilizing a container with a database running in it will allow your tests to not affect other tests that need to use a
+    database, unlike a common development server database might.
+</p>
+
+<h2>Testing With Containers</h2>
+<p>
+    My experience with writing tests against programmatically created Docker containers is mainly with Java as well as
+    a little bit of C# specifically with database containers so that is what I will use as reference here.
+    However the same concepts could be used in other
+    languages and there are probably similar libraries that already exist in popular languages. Testing with containers
+    is certainly not limited to using database containers. In Java there is an open
+    source library for <i>easy</i> programmatic testing called <a href="https://www.testcontainers.org/">testcontainers</a>.
+    An example of creating a container for a test with Postgres Junit5 would be something like:
+    <pre>
+        @Testcontainers
+        class MixedLifecycleTests {
+
+            // will be started before and stopped after each test method
+            @Container
+            private PostgreSQLContainer postgresqlContainer = new PostgreSQLContainer()
+                .withDatabaseName("foo")
+                .withUsername("foo")
+                .withPassword("secret");
+
+            @Test
+            void test() {
+                assertTrue(postgresqlContainer.isRunning());
+            }
+        }
+    </pre>
+    <br/>
+    As you can see it is fairly simple to setup. There is a lot more too it as well if you want to dive in such as setting
+    up SQL scripts to run when the database is created, specifying exposed ports, networks, mounted volumes... basically
+    anything you would typically want to do with a Docker container. They also support running Docker Compose scripts and even the Docker
+    wormhole pattern, meaning using Docker in Docker. This would typically occur if your build process is itself already running
+    in a Docker container, such as using a GitLab agent that uses a Docker container for the builds or running Jenkins itself
+    in a Docker container.
+</p>
+
+<p>
+    Setting up your tests to use Docker containers like this allows them to typically always behave the same and
+    will more closely mimic the real, live system that the application is being used in. To me, this gives me greater
+    confidence when I push this change to the development, staging or even production server that it will work properly.
+    This shouldn't take away from the need for moving releases through various stages of live systems (such as dev/stage/production)
+    however it is very useful for providing a way to test things in a realistic way on local developer's machines. All they
+    need to install is Docker typically and they're ready to go.
+</p>
+
+<h2>Drawbacks to Container Testing</h2>
+<p>
+    While there are some great benefits to using containers for testing, there can be some drawbacks. Such as container
+    start up time, Docker differences between Windows and Linux/MacOS, networking issues on build servers and more. For me
+    one drawback is that I have the (unfortunate) need to use <a href="https://www.ibm.com/analytics/db2">IBM DB2</a>
+    databases for testing. For this specific container it can take up to 2-4 minutes to start the container and get the
+    database running. Now if you have 50 tests running and you want a separate clean database for each test than that would
+    mean 100-200 minutes of test container creation. To get around this unfortunate start up time I combine all tests that
+    don't modify the database to use the same container. You could also optionally setup your test to restore the database
+    to the original state it was in before it completes. For instance, if your test is doing a delete on a table then after
+    it is finished it will restore this table. This strategy would allow the use of the same container for tests however
+    it doesn't always make sense for the test and it hardly differs from just hosting the database on some development server
+    and using that one (aside from working well on developer's local machines).
+</p>
+
