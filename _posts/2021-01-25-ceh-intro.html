@@ -1,0 +1,107 @@
+---
+layout: post
+title: "Dabbling with Certified Ethical Hacking"
+subtitle: "Intro to CEH"
+date: 2020-01-25
+background: '/img/posts/aws.png'
+---
+
+<h2>What is Hacking?</h2>
+<p>
+    Most non-technical people I talk to about <i>hacking</i> typically imagine some movie or TV show they've seen where
+    some person with 14 monitors and 6 keyboards is trying to <i>hack</i> into a bank, federal institution
+    or similar.
+    Something like this:
+    <img src="/img/posts/hacking-meme.jpg"/>
+    When it's more realistically just someone with a laptop, or in <a href="https://en.wikipedia.org/wiki/Mr._Robot">Mr
+    Robot's</a> case, something like this:
+    <img src="/img/posts/mr-robot.jpg"/>
+    Side note, if you haven't watched Mr. Robot you should, it's a pretty good show. Hacking has also been used as a sort
+    of verb to describe quickly putting together code for a project or to hot fix a bug. You've probably heard the term
+    "Hackathon", which is usually just a competition or meet up for developers to quickly put together a working piece
+    of software in a small amount of time. From a security standpoint though, hacking is simply <u>gaining unauthorized access
+    to a system or computer without permission.</u>
+</p>
+
+<h2>What is (Certified) Ethical Hacking?</h2>
+<p>
+    Ethical hacking (sometimes referred to as white hat) is when someone attempts to gain access to a system
+    <u>with permission</u> of the system owner in an attempt to expose vulnerabilities in their security. However, the
+    tools to perform illegal hacking and ethical hacking are typically the same. Organizations will actually pay security
+    consultants to break into their system so that they can close those gaps and holes in their security. You can actually
+    obtain an official <a href="https://en.wikipedia.org/wiki/Certified_Ethical_Hacker">CEH</a> certification similar
+    to getting AWS, Azure, GCP and other technical certifications. It's a pretty good certificate to have, especially if
+    you want to go into the security field. The best way to know how to defend a system from an attack is to know how
+    someone will attempt to attack you as well as the common vulnerabilities across systems, networking and the social
+    engineering aspect.
+</p>
+
+<h2>Getting Setup</h2>
+<p>
+    I don't have a heavy background in security but I've always been interested in learning more. I know a decent amount
+    about networking and common operating systems but I'd never actually attempted to <i>hack</i> into something of mine.
+    So I went on <a href="https://www.udemy.com/">Udemy</a> and found a decent intro course to Ethical Hacking. At first,
+    I just watched and took notes on the lectures to get the general theory and methods behind the different attacks but
+    after a while I had to try some of them on myself! I installed
+    <a href="https://www.kali.org/">Kali Linux</a> as a VM in <a href="https://www.virtualbox.org/">VirtualBox</a>. Kali
+    Linux comes preinstalled with a lot of penetration attacks, spoofing attacks and common tools for breaching security.
+    All of the tools could be used on other Linux machines as they are readily available in most package managers but the
+    easiest way to get started is to just use an updated Kali. I also went the extra step to purchase a external Wi-Fi
+    adapter as they're typically better than the built-in cards and are easier to use on a VM. In the end I had everything
+    up and running in less than an hour (except for waiting on the Wi-Fi adapter in the mail), it really didn't take long.
+</p>
+
+<h2>How I cracked my Wi-Fi password in less than a second</h2>
+<p>
+    The first thing I wanted to try out was attempting to gain access to my Wi-Fi network in my virtual machine. My Wi-Fi
+    , as most do these days, uses WPA2 as it's encryption standard and PSK (Pre-Shared Keys). While this is a relatively
+    secure standard, there is a major known vulnerability with WPS (Wi-Fi Protected Setup) on routers if configured
+    incorrectly. If you've ever pushed the button on your router and then on another wireless device without
+    having to enter a password, you've used WPS, specifically Push-Button WPS. There's another flavor of WPS, the PIN version,
+    which is always on and essentially allows access to the network with a "secret" WPS pin. The WPS PIN is an 8 digit number
+    that can be used to connect to the router without
+    having to enter in the Wi-Fi password. The problem with this is that it can be relatively easily brute forced as there
+    are only 10^8 possibilities. It's actually less than 10^8 because the EAP-NACK messages allow the attacker to know
+    if the first 4 digits are correct. To add on top of that, the last digit of the PIN is a checksum value, so instead
+    of 10^8 possibilities, there's only 10^4 + 10^3 or roughly 11,000 attempts needed to gain access. To add a little
+    cherry on top for attackers as well, a lot of WPS PINs across manufactures have a common default, such as '00000000'
+    or similar.
+    <br/>
+    So, of course, there are common tools that can be used to exploit this WPS vulnerability. The one I used on my personal
+    network is called <a href="https://github.com/t6x/reaver-wps-fork-t6x">reaver</a> combined with a tool called
+    <a href="https://en.kali.tools/?p=341">wash</a>. With my external Wi-Fi adapter so close to my router I was easily
+    able to capture the <i>encrypted</i> data sent on my own home network. The wash tool allows me to scan my network
+    to verify if WPS is enabled and to my dismay it was (it is for most default router configurations). Even more so, my
+    router had PIN mode enabled and not just Push Button. I switched my Wi-Fi adapter to the 2.4Ghz channel my router was on
+    and began to use the reaver tool to attempt to crack the pin and discover my Wi-Fi password in plaintext.
+    The command looks something like <code>reaver -i wlan0mon -b 00:11:22:33:44:55 -vv -d 3 -N -L –c 11</code>. You can
+    look at what these options mean in the documentation, but the gist of it is I specified my external wireless adapter
+    interface to <i>attack</i> the MAC address (my router) to attempt to brute force the correct WPS Pin. And, in less
+    than a second my Wi-Fi password was printed on my terminal in plaintext! There's another way to attempt to break the
+    WPS PIN in an offline attack called pixie-dust, which typically comes as another option in tools like reaver or bully.
+</p>
+
+<h2>Hacking Myself Continued</h2>
+<p>
+    Since then I've totally disabled WPS on my router and would suggest you do the same. Some routers employ a lock out where
+    after a few failed attempts it will lock out for a specific period of time or until manually turned back on. For fun
+    I also used <a href="https://www.aircrack-ng.org/doku.php?id=airodump-ng">airodump-ng</a> to capture the WPA2 handshake
+    on my network which I caused by using <a href="https://www.aircrack-ng.org/doku.php?id=aireplay-ng">aireplay-ng</a> to
+    deauthenticate my phone for a short amount of time from the network so that it had to reconnect. During the reconnect
+    it performs the WPA2 handshake which can be captured. Once you capture this handshake you can brute force password attempts
+    against it with <a href="https://www.aircrack-ng.org/">airecrack-ng</a> with a word list without any lockout since
+    it is all happening locally on your machine. However as this is just somewhat randomly guessing the password it could
+    take years to find the right one depending on the power of the machine and the strength of the password. Since I know
+    my Wi-Fi password I used <a href="https://sourceforge.net/projects/crunch-wordlist/">crunch</a> to generate a few thousand
+    passwords that had my password somewhere in it. Since it was only a few thousand it cracked it in a few seconds using
+    the wordlist and again I was presented my Wi-Fi password. From there I went on to perform some man in the middle attacks
+    on myself using ARP spoofing, then bypassed (some) HTTPS by using <a href=https://www.bettercap.org/">bettercap</a>
+    with ssl strip, which attempts to downgrade all HTTPS connections to HTTP so the data can be read unencrypted. Not
+    all sites are vulnerable to this because they use HSTS, which can be worked around in a way that is unlikely to work
+    for the average person. Then I went on to do some DNS spoofing with a little custom website I made, played with some
+    JavaScript injection. That's just scratching the surface really and just relying on existing tools to do the heavy
+    lifting. The best thing I got out of everything so far though is the theory and ideas behind the attacks as the tools
+    and security standards will change over time but a lot of the principles will stay the same. I'm sure I probably explained
+    some of this incorrectly and left a lot of info out but I'm relatively new to it and hope to eventually go on to learn
+    enough to take as well as pass the CEH exam.
+</p>
