@@ -12,10 +12,10 @@ background: '/img/posts/aws.png'
     some person with 14 monitors and 6 keyboards is trying to <i>hack</i> into a bank, federal institution
     or similar.
     Something like this:
-    <img src="/img/posts/hacking-meme.jpg"/>
+    <img src="/img/posts/hacking-meme.jpg" style="width: 1000px; height: 750px"/>
     When it's more realistically just someone with a laptop, or in <a href="https://en.wikipedia.org/wiki/Mr._Robot">Mr
     Robot's</a> case, something like this:
-    <img src="/img/posts/mr-robot.jpg"/>
+    <img src="/img/posts/mr-robot.jpg" style="width: 1000px; height: 750px"/>
     Side note, if you haven't watched Mr. Robot you should, it's a pretty good show. Hacking has also been used as a sort
     of verb to describe quickly putting together code for a project or to hot fix a bug. You've probably heard the term
     "Hackathon", which is usually just a competition or meet up for developers to quickly put together a working piece
@@ -66,7 +66,8 @@ background: '/img/posts/aws.png'
     of 10^8 possibilities, there's only 10^4 + 10^3 or roughly 11,000 attempts needed to gain access. To add a little
     cherry on top for attackers as well, a lot of WPS PINs across manufactures have a common default, such as '00000000'
     or similar.
-    <br/>
+</p>>
+<p>
     So, of course, there are common tools that can be used to exploit this WPS vulnerability. The one I used on my personal
     network is called <a href="https://github.com/t6x/reaver-wps-fork-t6x">reaver</a> combined with a tool called
     <a href="https://en.kali.tools/?p=341">wash</a>. With my external Wi-Fi adapter so close to my router I was easily
@@ -94,7 +95,10 @@ background: '/img/posts/aws.png'
     take years to find the right one depending on the power of the machine and the strength of the password. Since I know
     my Wi-Fi password I used <a href="https://sourceforge.net/projects/crunch-wordlist/">crunch</a> to generate a few thousand
     passwords that had my password somewhere in it. Since it was only a few thousand it cracked it in a few seconds using
-    the wordlist and again I was presented my Wi-Fi password. From there I went on to perform some man in the middle attacks
+    the wordlist and again I was presented my Wi-Fi password.
+</p>
+<p>
+    From there I went on to perform some man in the middle attacks
     on myself using ARP spoofing, then bypassed (some) HTTPS by using <a href=https://www.bettercap.org/">bettercap</a>
     with ssl strip, which attempts to downgrade all HTTPS connections to HTTP so the data can be read unencrypted. Not
     all sites are vulnerable to this because they use HSTS, which can be worked around in a way that is unlikely to work
